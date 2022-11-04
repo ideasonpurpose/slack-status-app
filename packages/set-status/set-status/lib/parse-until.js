@@ -15,8 +15,9 @@ const dayNames = {};
 ].forEach((days, n) => days.forEach((d) => (dayNames[d] = n)));
 
 /**
- * @param {string} input;
+ * @param {string} input
  * @param {DateTime} from
+ * @returns {DateTime}
  */
 const parseUntil = (input, from) => {
   let expiration = from.plus({ hours: 0 });

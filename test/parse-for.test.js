@@ -1,9 +1,6 @@
 import { DateTime } from "luxon";
 
-// import parseFor from "../lib/parse-for.js";
-import parseFor from "../lib/parse-for.js";
-
-// const parseFor = ParseFor.parseFor;
+import parseFor from "../packages/set-status/set-status/lib/parse-for.js";
 
 let base;
 beforeEach(() => {
@@ -137,7 +134,7 @@ describe("For tests (durations)", () => {
   });
 
   test("using words: seconds", () => {
-    const req = { for: "307 seconds" };
+    const req = { for: "three-hundred and seven seconds" };
     const expected = base.plus({ seconds: 307 });
     const actual = parseFor(req, base);
     expect(actual.toHTTP()).toEqual(expected.toHTTP());
@@ -203,6 +200,41 @@ describe("For tests (durations)", () => {
   test("leading-colon: one-digit minutes", () => {
     const req = { for: ":5:30" };
     const expected = base.plus({ minutes: 5, seconds: 30 });
+    const actual = parseFor(req, base);
+    expect(actual.toHTTP()).toEqual(expected.toHTTP());
+  });
+
+  test("mixed plural: minutes", () => {
+    const req = { for: "3 minutes" };
+    const expected = base.plus({ minutes: 3 });
+    const actual = parseFor(req, base);
+    expect(actual.toHTTP()).toEqual(expected.toHTTP());
+  });
+
+  test("mixed singular: minute", () => {
+    const req = { for: "1 minute" };
+    const expected = base.plus({ minutes: 1 });
+    const actual = parseFor(req, base);
+    expect(actual.toHTTP()).toEqual(expected.toHTTP());
+  });
+
+  test("mixed not plural: 2 minute", () => {
+    const req = { for: "2 minute" };
+    const expected = base.plus({ minutes: 2 });
+    const actual = parseFor(req, base);
+    expect(actual.toHTTP()).toEqual(expected.toHTTP());
+  });
+
+  test("mixed not singular: 1 minutes", () => {
+    const req = { for: "1 minutes" };
+    const expected = base.plus({ minutes: 1 });
+    const actual = parseFor(req, base);
+    expect(actual.toHTTP()).toEqual(expected.toHTTP());
+  });
+
+  test("mixed not plural: 2 minute", () => {
+    const req = { for: "2 minute" };
+    const expected = base.plus({ minutes: 2 });
     const actual = parseFor(req, base);
     expect(actual.toHTTP()).toEqual(expected.toHTTP());
   });

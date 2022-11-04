@@ -1,6 +1,10 @@
 # IOP Slack Status Bot
 
-This Slack App interprets slash commands and sets statuses for users who send messages.
+#### Version 0.0.0
+
+This project adds an `/iam` slash command to Slack for setting user status with more flexible expiration times.
+
+### Example commands
 
 The basic syntax looks like this:
 
@@ -12,9 +16,9 @@ For a status that will never expire, end it with forever:
 
 <code>/iam <strong>:emoji:</strong> Making client edits <strong>forever</strong></code>
 
-## Examples
+Statuses set without an expiration will expire by default after 1 hour.
 
-These all work:
+Expiration times are very flexible, these will all work:
 
 - /iam at IOP all day
 - /iam focused for 3 (hours)
@@ -26,7 +30,7 @@ These all work:
 - /iam making client edits until the end of time (no expiration)
 - /iam fixing WordPress stuff forever (no expiration)
 
-Even crazy stuff like this will work:
+Even crazy stuff like this:
 
 - /iam eating for :5 (five minutes)
 - /iam eating for 15:
@@ -36,13 +40,31 @@ Even crazy stuff like this will work:
 Slash commands: https://api.slack.com/interactivity/slash-commands
 `user.profile.set` status API: https://api.slack.com/methods/users.profile.set
 
-## AWS Lambda or Digital Ocean Function (instead of AWS Lambda)
+### Slack API Scopes
 
-1. Log the request (to see what we're getting, can't find it in docs)
+`users.profile:write` for writing the new status.
 
-### Digital Ocean Function Notes
+If we decide to try implementing adaptive local times like sunrise and sunset, we would also need the `users:read` scope to get timezones. Timezones are the most specific location data included in [Slack API user objects](https://api.slack.com/types/user), so timing local solar events would not be especially accurate.
+
+## Working with Digital Ocean Functions
+
+The backend of this project is running on a [Digital Ocean serverless function](https://www.digitalocean.com/products/functions). This can be deployed using the [`doctl` CLI tool](https://docs.digitalocean.com/reference/doctl/).
+
+After installing and [connecting `doctl` to our account](https://docs.digitalocean.com/reference/doctl/how-to/install/). Run `doctl serverless watch .` to automatically deploy the function after every change.
+
+Make sure to define `SLACK_USER_OAUTH_TOKEN` in a **.env** file. The token's value is the User OAuth Token found in the App's [OAuth & Permissions](https://api.slack.com/apps/A0451T229U5/oauth?) page.
+
+## TODO
+
+- Handle connection errors (check response for `ok = false`) and report to users. Currently it's only logged.
 
 ## Notes
+
+_this one screwed me over for a while..._
+
+When using `doctl serverless watch` to rapidly iterate on functions, _be very careful_ to define the project's Environment variables in the .env file. If those are not set, or if there is no environment defined in **project.yml** any environment variables defined on the DO site will be silently eliminated after deploying every update.
+
+After realizing this, I added a [templated environment variable](https://docs.digitalocean.com/products/functions/reference/project-configuration/#with-templating) to **project.yml** which makes deploys no longer work unless the variable is set in **.env** (or the environment?)
 
 Days and weeks start with the current day. Eg. On Monday at 11:30 AM, setting a status for four days will count Monday, so the status will expire on Thursday at midnight.
 
@@ -53,7 +75,7 @@ Additional supported time formats:
 
 ### Timezones
 
-Slack's API appears to operate on either the invoking user's timezone (`x-slack-request-timestamp`) or on the workspace timezone. There's no indication of user timezone in the provided data, so if that's wrong, we would need to query the user for their local timezone before calculating expirations. (I tested from the same timezone as the workspace)
+Wrong. Use users.info to retrieve the timezone. ~Slack's API appears to operate on either the invoking user's timezone (`x-slack-request-timestamp`) or on the workspace timezone. There's no indication of user timezone in the provided data, so if that's wrong, we would need to query the user for their local timezone before calculating expirations. (I tested from the same timezone as the workspace)~
 
 ### TODO
 

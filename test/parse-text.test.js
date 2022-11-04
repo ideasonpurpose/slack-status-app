@@ -1,21 +1,30 @@
 import { jest } from "@jest/globals";
-const mockTimestamp = "1678999999";
+import { DateTime } from "luxon";
 
-const parseForMock = jest.fn(() => mockTimestamp);
-const parseUntilMock = jest.fn(() => mockTimestamp);
+const mockTimestamp = 1678999999;
+const mockExpiration = DateTime.fromSeconds(mockTimestamp);
+
+const parseForMock = jest.fn(() => mockExpiration);
+const parseUntilMock = jest.fn(() => mockExpiration);
 let parseText;
 
 beforeAll(async () => {
   /**
    * Set up mocks for parseFor and parseUntil
    */
-  jest.unstable_mockModule("../lib/parse-for", () => ({
-    default: parseForMock,
-  }));
+  jest.unstable_mockModule(
+    "../packages/set-status/set-status/lib/parse-for",
+    () => ({
+      default: parseForMock,
+    })
+  );
 
-  jest.unstable_mockModule("../lib/parse-until", () => ({
-    default: parseUntilMock,
-  }));
+  jest.unstable_mockModule(
+    "../packages/set-status/set-status/lib/parse-until",
+    () => ({
+      default: parseUntilMock,
+    })
+  );
 
   /**
    * OMG this is ugly.
@@ -28,7 +37,9 @@ beforeAll(async () => {
    * Ugly, but nicer than repeating this in every test.
    */
 
-  let { default: libParseText } = await import("../lib/parse-text");
+  let { default: libParseText } = await import(
+    "../packages/set-status/set-status/lib/parse-text"
+  );
   parseText = libParseText;
 });
 
@@ -50,15 +61,18 @@ afterEach(() => {
 });
 
 test("checking mock", async () => {
-  const { default: parseUntil } = await import("../lib/parse-until");
+  const { default: parseUntil } = await import(
+    "../packages/set-status/set-status/lib/parse-until"
+  );
   const actual = parseUntil({ for: 10 }, "datetime");
   expect(parseUntilMock).toHaveBeenCalled();
-  expect(actual).toBe(mockTimestamp);
+  expect(actual).toBe(mockExpiration);
 });
 
 test("checking mock deeper", async () => {
   // const { default: parseText } = await import("../lib/parse-text");
   const actual = parseText("Testing for 3 hours");
+  console.log({ actual });
   expect(parseForMock).toHaveBeenCalled();
   expect(actual).toHaveProperty("status_expiration");
 });
@@ -73,6 +87,7 @@ test(":horse: I'm on a horse for two hours", async () => {
 
   expect(actual).toHaveProperty("status_emoji", ":horse:");
   expect(actual).toHaveProperty("status_text", "I'm on a horse");
+  expect(actual).toHaveProperty("status_expiration", mockTimestamp);
 
   expect(parseForMock).toHaveBeenCalled();
   expect(parseForMock.mock.calls[0][0]).toEqual({ for: "two hours" });
@@ -82,6 +97,7 @@ test(":coffee: Coffee! until 2:25", async () => {
   const actual = parseText(expect.getState().currentTestName);
   expect(actual).toHaveProperty("status_emoji", ":coffee:");
   expect(actual).toHaveProperty("status_text", "Coffee!");
+  expect(actual).toHaveProperty("status_expiration", mockTimestamp);
 
   expect(parseUntilMock).toHaveBeenCalled();
   expect(parseUntilMock.mock.calls[0][0]).toEqual({ until: "2:25" });

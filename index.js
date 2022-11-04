@@ -1,15 +1,15 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import { main } from "./digital-ocean/packages/set-status.js";
+import { main } from "./packages/set-status/set-status/set-status.js";
 
-console.log(main);
-
-const timestamp = 1665415353; // 2022-10-10 11:22:33
+const timestamp = (new Date().getTime() / 1000).toFixed(0);
 const args = {
   command: "/iam",
-  text: ":stopwatch: checking time",
-  user_id: "U8Z7P2G0H",
+  text: ":robot_face: local test for 20 minutes",
+  // user_id: "U8Z7P2G0H", // joe @ joe's slack playground
+  user_id: "U06A8QEJ2", // joe @ IOP
   "x-slack-request-timestamp": timestamp,
 };
+
 main(args);

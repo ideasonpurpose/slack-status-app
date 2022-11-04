@@ -1,0 +1,19 @@
+{
+  "name": "set-status",
+  "version": "0.0.0",
+  "description": "Set a slack status",
+  "type": "module",
+
+  "license": "ISC",
+  "author": "Joe Maller <joe@ideasonpurpose.com>",
+  "main": "set-status.js",
+  "scripts": {
+    "test": "cd ../../ && npm run test",
+    "test:watch": "cd ../../ && npm run test:watch"
+
+  },
+  "dependencies": {
+    "luxon": "^3.1.0",
+    "words-to-numbers": "^1.5.1"
+  }
+}

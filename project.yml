@@ -1,0 +1,7 @@
+packages:
+  - name: set-status
+    environment: 
+      SLACK_USER_OAUTH_TOKEN: "${SLACK_USER_OAUTH_TOKEN}"
+    functions:
+      - name: set-status
+        runtime: 'nodejs:18'

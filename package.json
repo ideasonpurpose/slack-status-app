@@ -2,15 +2,15 @@
   "name": "slack-status-app",
   "version": "1.0.0",
   "description": "",
-  "keywords": [],
   "license": "ISC",
-  "author": "",
+  "author": "Joe Maller <joe@ideasonpurpose.com>",
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "postinstall": "cd packages/set-status/set-status && npm install",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
-    "version": "node cli.js README.md && auto-changelog && git add -u"
+    "version": "version-everything && auto-changelog && git add -u"
   },
   "jest": {
     "clearMocks": true,
@@ -22,13 +22,17 @@
     "transform": {},
     "verbose": true
   },
-  "dependencies": {
-    "dotenv": "^16.0.3",
-    "luxon": "^3.0.4",
-    "words-to-numbers": "^1.5.1"
-  },
   "devDependencies": {
     "auto-changelog": "^2.3.0",
-    "jest": "^29.2.2"
+    "dotenv": "^16.0.3",
+    "jest": "^29.2.2",
+    "luxon": "^3.1.0",
+    "version-everything": "^0.9.1"
+  },
+  "version-everything": {
+    "files": [
+      "README.md",
+      "packages/set-status/set-status/package.json"
+    ]
   }
 }
