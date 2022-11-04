@@ -1,6 +1,6 @@
 # IOP Slack Status Bot
 
-#### Version 0.0.0
+#### Version 1.0.0
 
 This project adds an `/iam` slash command to Slack for setting user status with more flexible expiration times.
 
