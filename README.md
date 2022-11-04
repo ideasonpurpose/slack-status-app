@@ -56,7 +56,10 @@ Make sure to define `SLACK_USER_OAUTH_TOKEN` in a **.env** file. The token's val
 
 ## TODO
 
+- Always [return a 200](https://api.slack.com/interactivity/slash-commands#responding_to_commands) to try and prevent timeouts? Is this a code issue or DO Functions having a slow start?
 - Handle connection errors (check response for `ok = false`) and report to users. Currently it's only logged.
+- Could we send 3-5 really quick profile updates with random or sequential emojis, then arrive at the final one?
+- Even though `/active` and `/away` both work to toggle Active/Away state, we could add these, with expirations. eg. `/iam away for 15 minutes`
 
 ## Notes
 

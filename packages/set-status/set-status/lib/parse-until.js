@@ -68,6 +68,11 @@ const parseUntil = (input, from) => {
     [, hours, minutes = 0, seconds = 0, meridiem] = matches;
     hours = (meridiem === "pm" ? parseInt(hours, 10) + 12 : hours).toString();
     expiration = expiration.set({ hours, minutes, seconds });
+
+    if (expiration < from) {
+      expiration = expiration.plus({ days: 1 });
+    }
+
     time = time.replace(time12ampmRegExp, "");
   }
 

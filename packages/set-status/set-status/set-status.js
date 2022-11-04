@@ -5,7 +5,9 @@ export function main(args) {
 
   const user = args.user_id;
   const { text } = args;
-  const timestamp = args["x-slack-request-timestamp"];
+  const timestamp =
+    args["x-slack-request-timestamp"] ??
+    args.__ow_headers["x-slack-request-timestamp"];
 
   const status = parseText(text, timestamp);
 
@@ -19,7 +21,7 @@ export function main(args) {
     Authorization: `Bearer ${AUTH_TOKEN}`,
   };
 
-  console.log({ args, status });
+  // console.log({ text: args.text, status });
 
   return fetch("https://slack.com/api/users.profile.set", {
     method: "POST",

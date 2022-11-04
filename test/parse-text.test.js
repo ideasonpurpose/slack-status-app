@@ -6,6 +6,7 @@ const mockExpiration = DateTime.fromSeconds(mockTimestamp);
 
 const parseForMock = jest.fn(() => mockExpiration);
 const parseUntilMock = jest.fn(() => mockExpiration);
+
 let parseText;
 
 beforeAll(async () => {
@@ -142,6 +143,25 @@ test("Sitting here jauntily all day", () => {
 // //   const req = "Maximizing coverage until 4pm";
 // //   expect(parseText(expect.getState().currentTestName)).toHaveProperty("status_text", "Maximizing coverage");
 // // });
+
+test(":sleeping: Asleep until 7", () => {
+  const actual = parseText(expect.getState().currentTestName);
+  expect(actual).toHaveProperty("status_emoji", ":sleeping:");
+  expect(actual).toHaveProperty("status_text", "Asleep");
+
+  expect(parseUntilMock).toHaveBeenCalled();
+  expect(parseUntilMock.mock.calls[0][0]).toEqual({ until: "7" });
+});
+
+test(":sleeping: asleep until 7 am", () => {
+  const actual = parseText(expect.getState().currentTestName);
+  expect(actual).toHaveProperty("status_emoji", ":sleeping:");
+  expect(actual).toHaveProperty("status_text", "asleep");
+
+  expect(parseUntilMock).toHaveBeenCalled();
+  expect(parseUntilMock.mock.calls[0][0]).toEqual({ until: "7 am" });
+});
+
 
 test("at the office all day", () => {
   const actual = parseText(expect.getState().currentTestName);

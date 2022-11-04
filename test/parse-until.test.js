@@ -1,21 +1,17 @@
 import { DateTime } from "luxon";
 import parseUntil from "../packages/set-status/set-status/lib/parse-until.js";
 
-// const parseUntil = ParseUntil.parseUntil;
-
 /**
  * Utility helper for converting JS Dates to Unix seconds-based timestamps
  * TODO: Problem that this returns a string? (API happily accepts strings)
  * @param {Date} date
  * @returns {String} a timestamp as a string
  */
-// const dateToUnixTimestamp = (date) => (date.getTime() / 1000).toFixed(0);
-// const unixTimeStampToDate = (timeString) =>
-//   new Date(parseInt(timeString, 10) * 1000);
 
 let base;
 beforeEach(() => {
-  base = DateTime.fromISO("2022-10-10T11:22:33Z", { zone: "utc" });
+  // base = DateTime.fromISO("2022-10-10T11:22:33Z", { zone: "utc" });
+  base = DateTime.utc().set({ hours: 11, minutes: 22, seconds: 33 });
 });
 
 describe("Expiration Tests (until)", () => {
@@ -27,6 +23,22 @@ describe("Expiration Tests (until)", () => {
       seconds: 0,
     });
     const actual = parseUntil(req, base);
+    expect(actual.toHTTP()).toEqual(expected.toHTTP());
+  });
+
+  test("basic time: lowercase am (tomorrow)", () => {
+    const beforeBase = base.set({ hours: 7 });
+    const hour_am = beforeBase.toFormat("h a").toLowerCase();
+    const req = { until: hour_am };
+    const expected = base
+      .set({
+        hours: beforeBase.hour,
+        minutes: 0,
+        seconds: 0,
+      })
+      .plus({ days: 1 });
+    const actual = parseUntil(req, base);
+    expect(hour_am).toEqual(`${beforeBase.hour} am`);
     expect(actual.toHTTP()).toEqual(expected.toHTTP());
   });
 
@@ -89,9 +101,20 @@ describe("Expiration Tests (until)", () => {
   });
 
   test("bare integer > now", () => {
-    const req = { until: 12 }; // Next logical 5:00 AM/PM
+    const req = { until: 12 };
     const expected = base.set({
       hours: 12,
+      minutes: 0,
+      seconds: 0,
+    });
+    const actual = parseUntil(req, base);
+    expect(actual.toHTTP()).toEqual(expected.toHTTP());
+  });
+
+  test("bare numeric string", () => {
+    const req = { until: "7" };
+    const expected = base.set({
+      hours: 19,
       minutes: 0,
       seconds: 0,
     });
@@ -168,7 +191,7 @@ describe("Expiration Tests (until)", () => {
       minutes: 25,
       seconds: 0,
     });
-    const actual = parseUntil(req, base);
+    const actual = parseUntil(req, base.set({ hours: 9 }));
     expect(actual.toHTTP()).toEqual(expected.toHTTP());
   });
 
@@ -264,11 +287,14 @@ describe("Expiration Tests (until)", () => {
 
   test("no-colon times 6-digit with seconds", () => {
     const req = { until: "123456" }; // expect 9:00 AM - 24-hour time next day
-    const expected = base.set({
+    let expected = base.set({
       hours: 12,
       minutes: 34,
       seconds: 56,
     });
+    if (expected < base) {
+      expected = expected.plus({ days: 1 });
+    }
     const actual = parseUntil(req, base);
     expect(actual.toHTTP()).toEqual(expected.toHTTP());
   });

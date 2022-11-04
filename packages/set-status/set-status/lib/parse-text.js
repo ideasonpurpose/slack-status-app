@@ -22,11 +22,6 @@ export default function (raw, ts) {
    */
   const tsDateTime = DateTime.fromSeconds(parseInt(ts, 10));
 
-  // let expiration = DateTime.fromSeconds(ts);
-  // if (!expiration.isValid) {
-  //   throw new Error("Invalid Timestamp");
-  // }
-
   const emojiPattern = /^(:[_A-Z0-9-]+:)(.*)/i;
   matches = text.match(emojiPattern);
   if (matches) {
@@ -86,7 +81,7 @@ export default function (raw, ts) {
   }
 
   // console.log(status_expiration);
-  status_expiration = status_expiration.toSeconds()
+  status_expiration = status_expiration.toSeconds();
 
   return { status_emoji, status_text, status_expiration };
 }

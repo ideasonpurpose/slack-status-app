@@ -4,7 +4,8 @@ import parseFor from "../packages/set-status/set-status/lib/parse-for.js";
 
 let base;
 beforeEach(() => {
-  base = DateTime.fromISO("2022-10-10T11:22:33Z", { zone: "utc" }); // Monday
+  // base = DateTime.fromISO("2022-10-10T11:22:33Z", { zone: "utc" }); // Monday
+  base = DateTime.utc();
 });
 
 describe("For tests (durations)", () => {
@@ -145,7 +146,6 @@ describe("For tests (durations)", () => {
     const expected = base.startOf("day").plus({ days: 4 });
     const actual = parseFor(req, base);
     expect(actual.toHTTP()).toEqual(expected.toHTTP());
-    expect(expected.month).toBe(10);
   });
 
   test("using words: hyphenated numbers", () => {
