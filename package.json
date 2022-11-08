@@ -10,6 +10,9 @@
     "postinstall": "cd packages/set-status/set-status && npm install",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
+    "logs:watch": "doctl serverless activations logs --follow",
+    "deploy:watch": "doctl serverless watch .",
+    "deploy": "doctl serverless deploy .",
     "version": "version-everything && auto-changelog && git add -u"
   },
   "jest": {
