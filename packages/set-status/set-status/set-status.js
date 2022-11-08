@@ -9,6 +9,17 @@ export function main(args) {
     args["x-slack-request-timestamp"] ??
     args.__ow_headers["x-slack-request-timestamp"];
 
+  console.log({ date: new Date(), tz: new Date().getTimezoneOffset() });
+
+  if (!text) {
+    return {
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        body: JSON.stringify({ done: true }),
+        Status: 500,
+      },
+    };
+  }
   const status = parseText(text, timestamp);
 
   const payload = {
@@ -20,8 +31,6 @@ export function main(args) {
     "Content-Type": "application/json; charset=utf-8",
     Authorization: `Bearer ${AUTH_TOKEN}`,
   };
-
-  // console.log({ text: args.text, status });
 
   return fetch("https://slack.com/api/users.profile.set", {
     method: "POST",
